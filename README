@@ -1,0 +1,50 @@
+/*****************************************************************************
+* File Transfer
+* Author: Isabel Muste
+* Project Language: C
+*****************************************************************************/
+
+The purpose of this program is to provide the user with a way to transfer
+files over the UDP transport layer protocol. UDP does not have reliability
+built in, so this program provides the reliability for the user by implementing
+the Go-Back-N protocol within this program. 
+
+The program is implemented by a server which can communicate with clients
+to server files from disk to the clients. The server handles one file transfer 
+at a time. The data packets sent by the server are always 512 bytes unless
+it is the last packet which can be less than 512 bytes. This will signal to
+the client that the end of the file transfer has been reached. For each packet
+the server will expect the client to send an ACK but if it has not received
+an ACK after 3 seconds for a packet, it will retransmit the window. The 
+server will retransmit the window up to 5 times after which it will end the
+communication with the client.
+
+This program taught me to understand reliability protocols such as the 
+Go-Back-N, selective repeat, and other protocols. It also taught me the 
+details of the Go-Back-N algorithm and how to implement this to provide 
+reliability when using an unreliable transport layer protocol such as UDP. It
+also gave me a deeper understanding of writing code over UDP and how to 
+maintain a state on the different clients.
+
+
+/*****************************************************************************
+ RUNNING THE PROGRAM
+*****************************************************************************/
+- Compile using 
+    gcc -g serverDriver.c server.c -o server -lm
+- Run with
+    ./server [userPort]
+
+Once the program is running the user can use any of the client programs in the
+tetFiles directory to request files off the disk from the server. The files
+requested by the client can be any files such as image files, text files, etc.
+Each client has a corresponding file on the disk that it will request. To use
+the client programs:
+- chmod +x make.sh
+- ./make.sh (to compile the client programs)
+- ./client [serverIP] [serverPort] > client1_Out.txt
+- diff client1_Out.txt client1_GT.txt
+
+Additionally, the testFiles directory includes a script that runs all of the
+client programs. This scrips is written in the 'programTesting.sh' file
+which can be executed.

@@ -1,0 +1,2 @@
+Reliability concepts can be applied to anything but are also important in the transport layer functionality especially for TCP. In any communication channel bits can be flipped, packets can be dropped, or packets can delayed, so we need to come up with ways to detect this and fix it.
+One important concept is the checksum which is a sum of bits that we can compare against a previously determined sum to see if any bits were flipped. If the checksum doesn't match and we have a sender or receiver, we can endd..

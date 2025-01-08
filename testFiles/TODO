@@ -1,0 +1,194 @@
+client1.c: 
+  - WINSize = 3
+  - File = client1_GT.txt (2463 bytes)
+  - Write RRQ
+  - Read packets 0, 1, 2
+  - Write ACK 2
+  - Read packets 3, 4
+  - Write ACK 3, 4
+--> checks file transfer with cumulative ACK and incremental ACK
+
+client2.c: 
+  - WINSize = 1
+  - File = filex.txt
+  - Write RRQ
+  - Read ERROR
+--> checks that ERROR is received with wrong file name
+
+client3.c: 
+  - WINSize = 3
+  - File = client3_GT.txt (2793 bytes)
+  - Write RRQ
+  - Read packets 0, 1, 2
+  - Write ACK 1
+  - Read packets 3, 4
+  - Write ACK 3
+  - Read packet 5
+  - Write ACK 5
+--> checks moving window functionality with cumulative ACK
+
+client4.c:
+  - WINSize = 3
+  - File = client4_GT.txt (3150 bytes)
+  - Write RRQ
+  - Read packets 0, 1, 2
+  - Write ACK 0
+  - Read packet 3
+  - Sleep 6
+  - Read packets 1, 2, 3
+  - Read packets 1, 2, 3
+  - Write ACK 2
+  - Read packets 4, 5
+  - Sleep 3
+  - Read packets 3, 4, 5
+  - Write ACK 5
+  - Read packet 6
+  - Sleep 3
+  - Read packet 6
+  - Write ACK 6
+--> checks moving window and timeout functionality
+
+
+client5.c: 
+  - WINSize = 4
+  - File = client5_GT.txt (882 bytes)
+  - Write RRQ
+  - Read packets 0 and 1 - 5 times but no ACK
+--> checks that after 5th timeout, server stops communication
+
+
+client6.c: 
+  - WINSize = 3
+  - File = client6_GT.txt (1024 bytes)
+  - Write RRQ
+  - Read packets 0, 1
+  - Write ACK 0
+  - Read packet 1
+  - Write ACK 1
+  - Read packet 2 (empty packet)
+  - Write ACK 2
+--> checks that file that is multiple of 512 is handled correctly
+
+
+client7.c: 
+  - WINSize = 6
+  - File = image1_GT.jpg (459 bytes)
+  - Write RRQ
+  - Read packet 0
+  - Write ACK 0
+--> checks that a small binary file works correctly
+
+
+client8.c: 
+  - WINSize = 9
+  - File = image3_GT.png (10244 bytes)
+  - Write RRQ
+  - Read packets 0, 1, 2, 3, 4, 5, 6
+  - Read packets 7, 8 (LOST)
+  - Write ACK 6
+  - Read packets 9, 10, 11, 12, 13, 14, 15 (LOST)
+  - Sleep 3
+  - Read packets 7, 8, 9, 10, 11, 12, 13, 14, 15
+  - Write ACK 15
+  - Read packets 16, 17, 18, 19
+  - Read packet 20 (LOST)
+  - Write ACK 19
+  - Read packet 20
+  - Write ACK 20
+--> checks that a large binary file with window size 9 works correctly
+
+
+client9.c:
+  - WINSize = 2
+  - File = client9_GT.txt (3265 bytes)
+  - Write RRQ
+  - Read packets 0, 1
+  - Write ACK 1
+  - Read packets 2, 3
+  - Write ACK 0 (should be discarded)
+  - Write ACK 3
+  - Read packets 4, 5
+  - Write ACK 4
+  - Read packet 6
+  - Write ACK 6
+--> sends one ACK out of order, so this ACK should get discarded
+
+
+client10.c:
+  - WINSize = 1
+  - File = client10_GT.txt (1287 bytes)
+  - Write RRQ
+  - Read packet 0
+  - Write ACK 0
+  - Read packet 1
+  - Sleep 3
+  - Read packet 1
+  - Write ACK 1
+  - Read packet 2
+  - Write ACK 2
+--> sends 1 ACK at a time, so window moves by 1 every time
+
+
+client11.c:
+  - WINSize = 9
+  - File = client11_GT.txt (33 bytes)
+  - Write RRQ
+  - Read packet 0
+  - Sleep 6
+  - Read packet 0
+  - Read packet 0
+  - Write ACK 0
+--> uses a file that is smaller than one packet
+
+
+client12.c:
+  - WINSize = 2
+  - File = client12_GT.txt (512 bytes)
+  - Write RRQ
+  - Read packet 0
+  - Read packet 1
+  - Write ACK 1
+--> uses a file that is exactly one packet
+
+
+client13.c:
+  - WINSize = 3
+  - File = image2_GT.jpg (4297 bytes)
+  - Write RRQ
+  - Read packet 0, 1
+  - Read packet 2 (LOST)
+  - Write ACK 1
+  - Read packets 3, 4 (LOST)
+  - Sleep 12
+  - Read packets 2, 3, 4 (LOST) 3 times
+  - Read packets 2, 3, 4
+  - Write ACK 4
+  - Read packets 5, 6, 7
+  - Write ACK 7
+  - Read packet 8
+  - Write ACK 8
+--> tests a long loss that lasts 4 timeouts and is received on the 5th try
+
+
+client14.c:
+  - WINSize = 4
+  - File = client14_GT.txt (2277 bytes)
+  - Write RRQ
+  - Read packets 0, 1, 2, 3
+  - Write ACK 4 (should get discarded)
+  - Sleep 2
+  - Write ACK 2
+  - Read packet 4
+  - Write ACK 4
+-->  Write ACK for packet that hasn't been sent yet (ACK 4 when packets 0, 1 
+  were sent)
+
+
+Testing:
+  - Max file size (26112 bytes)
+
+
+#FINAL
+tar -cvf a3.tar.gz serverDriver.c server.c server.h
+provide comp112 a3 a3.tar.gz
+ 
